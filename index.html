@@ -84,42 +84,17 @@
         <section>
           <h2>Elasticsearch and Drupal</h2>
           <p><small>Presented by Bec White</small></p>
-          <p><small>Prepared for <a href="http://2014.drupalcampfv.org/">Pacific Northwest Drupal Summit</a>, October 2014</small></p>
+          <p><small>Prepared for <a href="http://2014.badcamp.net/">BADCamp</a>, November 2014</small></p>
         </section>
-        
+
         <section>
           <h2>Bec White</h2>
           <p>Senior Engineer and Team Lead at <a href="http://palantir.net/">Palantir.net</a></p>
           <p><a href="http://twitter.com/becw">@becw</a> on Twitter</p>
+          <aside class="notes">
+            <p>mentors - friend who dragged me to my first drupalcamp 8 years ago, my first drupal job that sent me to lots of drupalcons and camps, everybody on the palantir.net team</p>
+          </aside>
         </section>
-
-<section>
-  <h2>What is Elasticsearch?</h2>
-  <ul>
-    <li>An open source search server</li>
-    <li>Based on the Lucene search engine (like Solr)</li>
-    <li>Distributed and scalable</li>
-    <li>Speaks JSON</li>
-  </ul>
-  
-  <aside class="notes">
-    <p>Other search servers you may be familiar with:</p>
-    <ul>
-      <li>Drupal core search (Drupal itself is the search server)</li>
-      <li>Apache Solr</li>
-      <li>Sphinx</li>
-      <li>Google Search Appliance</li>
-    </ul>
-  </aside>
-</section>
-
-<section>
-  <h2>"You Know, for Search"</h2>
-  <aside class="notes">
-    <p>Elasticsearch's tagline</p>
-    <p>Site search, but also working with tons of data, and also as a fast data backend for a JSON API.</p>
-  </aside>
-</section>
 
 <section>
   <h2>What is a search server?</h2>
@@ -153,7 +128,7 @@
 
   <aside class="notes">
     <p>Full text search means matching against content from different parts of a document (fields on a node), and matching documents that don't contain the exact query.</p>
-    <p>In Drupal, "lots of content" is somewhere over 10,000 nodes/documents. This is approaching the point where core search doesn't make sense--it doesn't provide the search features useful for narrowing a large result set, or it starts to have performance issues</p>
+    <p>In Drupal, "lots of content" is somewhere over 5 or 10 thousand nodes/documents. This is approaching the point where core search doesn't make sense--it doesn't provide the search features useful for narrowing a large result set, or it starts to have performance issues</p>
     <p>I've implemented Drupal core search across 20,000 documents, and the performance was... not good. Part of this was the additional filtering that we applied to the result set.</p>
   </aside>
 </section>
@@ -179,6 +154,39 @@
   </aside>
 </section>
 
+<section>
+  <h2>What is Elasticsearch?</h2>
+  <ul>
+    <li>An open source search server</li>
+    <li>Based on the Lucene search engine (like Solr)</li>
+    <li>Distributed and scalable</li>
+    <li>Speaks JSON</li>
+  </ul>
+
+  <aside class="notes">
+    <p>"You Know, for Search"</p>
+    <p>Site search, but also working with tons of data, and also as a fast data backend for a JSON API.</p>
+    <p>Other search servers you may be familiar with:</p>
+    <ul>
+      <li>Drupal core search (Drupal itself is the search server)</li>
+      <li>Apache Solr</li>
+      <li>Sphinx</li>
+      <li>Google Search Appliance</li>
+    </ul>
+  </aside>
+</section>
+
+<section>
+  <h2>Running Elasticsearch for development</h2>
+  <ul>
+    <li>Run a local vagrant box (<a href="https://gist.github.com/becw/06bc47ce2dc8a7205ed8">gist</a>)</li>
+    <li>Beware: Elasticsearch itself doesn't do access control</li>
+  </ul>
+  <aside class="notes">
+    <p>vagrant is great for development because you don't run into collisions with other developers, and you can poke it as much as you want</p>
+    <p>talk to your ops about this!</p>
+  </aside>
+</section>
 
 <section>
   <h2>Three stories about search</h2>
@@ -197,123 +205,34 @@
   <section>
     <h2>Site search</h2>
   </section>
-  
+
   <section>
-    <h2>Why?</h2>
-    <p>So that users can find content using approximate terms.</p>
+    <h2>Site search</h2>
+    <ul>
+      <li>Do it because you want fulltext search</li>
+      <li>Use Search API + Elasticsearch Connector</li>
+      <li>Use Solr instead of Elasticsearch for the general case</li>
+    </ul>
     <aside class="notes">
-      <p>ie, full text search. typically you would have a lot of content with kind of... mediocre organization... or at least big stacks of content that don't have a clear hierarchy--lots of leaves on the tree.</p>
+      <p>Views "contains" text searches (case-insensitive because MySQL configuration but otherwise exact match only), SQL LIKE wildcard queries</p>
+      <p>Drupal core search (some analysis, tokenization), so actually can be sufficient when you don't have too much content and don't need fancy features</p>
+      <p>So that users can find content using approximate terms in big stacks of content that don't have a clear hierarchy</p>
+      <p>Search API lets you configure which fields are searchable and how</p>
       <p>in drupal, "content" means nodes, not generally pages. so the site search won't return listing pages, landing pages, etc., unless those pages are built as nodes (or some other sort of entity).</p>
-      <p>Views "contains" text searches (case-insensitive because MySQL configuration but otherwise exact match only)</p>
-      <p>SQL LIKE wildcard queries</p>
-      <p>Drupal core search (analyzes text), so actually can be sufficient when you don't have too much content and don't need fancy features</p>
     </aside>
   </section>
 
   <section>
-    <h2>How?</h2>
-    <ul>
-      <li>Get an Elasticsearch server</li>
-      <li>Install some modules</li>
-      <li>Click a lot</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Running Elasticsearch for development</h2>
-    <ul>
-      <li>Run a local vagrant box (<a href="https://gist.github.com/becw/06bc47ce2dc8a7205ed8">gist</a>)</li>
-      <li>Beware: Elasticsearch itself doesn't do access control</li>
-    </ul>
-    <aside class="notes">
-      <p>vagrant is great for development because you don't run into collisions with other developers, and you can poke it as much as you want</p>
-      <p>talk to your ops about this!</p>
-    </aside>
-  </section>
-
-  <section>
-    <h2>Which modules?</h2>
-    <ul>
-      <li><a href="http://drupal.org/project/search_api">Search API</a> (requires <a href="http://drupal.org/project/entity">Entity API</a>)</li>
-      <li><a href="http://drupal.org/project/composer_manager">Composer Manager</a></li>
-      <li><a href="http://drupal.org/project/elasticsearch_connector">Elasticsearch Connector</a></li>
-    </ul>
-
-    <aside class="notes">
-      <p>Elasticsearch Connector...
-        <ul>
-          <li>depends on the Elasticsearch PHP library via Composer</li>
-          <li>Thin layer to connect to an Elasticsearch cluster</li>
-          <li>Includes a separate Search API integration module</li>
-          <li>The Elasticsearch PHP library is Apache2 licensed.</li>
-          <li>"easy install" option - don't use it, use composer manager + composer instead</li>
-        </ul>
-      </p>
-    </aside>
-  </section>
-
-  <section>
-    <pre>$ drush dl entity search_api composer_manager elasticsearch_connector
-$ drush en composer_manager elasticsearch_connector_search_api search_api_views</pre>
-  </section>
-
-  <section>
-    <h2>Configuration checklist</h2>
-    <ul>
-      <li>Elasticsearch Connector cluster</li>
-      <li>Search API server</li>
-      <li>Search API index</li>
-      <li>A search view</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Aside: terminology overload</h2>
-    <ul>
-      <li>Elasticsearch has "clusters", "nodes", "indexes", and "types"</li>
-      <li>Elasticsearch Connector has "clusters"</li>
-      <li>Search API has "servers" and "indexes"</li>
-    </ul>
-    <aside class="notes">
-      <ul>
-        <li>Elasticsearch Connector "clusters" manage connections to search servers</li>
-        <li>Search API "servers" correspond with "clusters"</li>
-        <li>Search API "indexes" configure how specific content is indexed... this is not specific to Elasticsearch, but has some Elasticsearch-specific options.:
-          <ul>
-            <li>Which fields are searchable?</li>
-            <li>How are they searchable?</li>
-            <li>Should any nodes be excluded?</li>
-            <li>Should additional data be included in the index?</li>
-            <li>Data "type" name (Elasticsearch)</li>
-            <li>Result highlighting (Elasticsearch)</li>
-          </ul>
-        </li>
-      </ul>
-    </aside>
-  </section>
-  
-  <section>
-    <h2>Your "Search API index" does not correspond with an "Elasticsearch index"</h2>
-  </section>
-
-  <section>
-    <h2>A quick demo...</h2>
-    <aside class="notes">
-      <p>alice.local, here is a site with some content, go to /search, search for "queen of the turtles"</p>
-    </aside>
-  </section>
-
-  <section>
-    <h2>So this isn't actually very good search...</h2>
+    <h2>Out-of-the-box, this isn't actually very good search...</h2>
     <ul>
       <li>Weird result order</li>
       <li>Terms combined using OR</li>
     </ul>
-  
+
     <aside class="notes">
-      <p>weird result order = unimportant words affect results, words match too precisely. this is because the analysis isn't quite right. can fix this by updating the index configuration.</p>
-      <p>third thing... the OR... is because of the way the search query is built by elasticsearch_connector_search_api. this is a lot harder to change.</p>
-      <p>these issues are why you probably want to use solr as your search server if you are implementing site search.</p>
+      <p>weird result order = unimportant words affect results, words match too precisely. can fix this by updating the index configuration.</p>
+      <p>third thing... the OR, even though default views filter config says AND... is because of the way the search query is built by elasticsearch_connector_search_api. this is a lot harder to change.</p>
+      <p>these issues are why you might want to use solr as your search server if you are implementing site search.</p>
     </aside>
   </section>
 
@@ -325,36 +244,21 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
       <li>Stop words ("a", "an", "the", "for")</li>
     </ul>
     <aside class="notes">
-      <p>you have to know about these in order to tweak the analyzer.</p>
+      <p>that said, it's really easy to tweak the analyzer in elasticsearch to make your search better--way easier than solr.</p>
+      <p>in order to tweak the analyzer, you need to know a couple of things.</p>
       <p>case and punctuation are somewhat universal; stemming and stop words are language specific! this is why they don't come configured by default.</p>
       <p>if you're working with language that uses accents, you may also want the icu-folding elasticsearch plugin (on the ES server) to do character folding</p>
       <p>at the elasticsearch level, you can apply different analyzers to different fields.</p>
       <p>sometimes you don't want to analyze a field... why wouldn't you? for sorting, for facets, fields should only contain a single token.</p>
   </section>
 
-  <section>
-    <h2>A quick demo...</h2>
-    <aside class="notes">
-      <p>poke alice.module so that some analysis changes are made, reset the search index, reindex the content</p>
-      <p>go to alice.local/search, search for "queen of the turtles"</p>
-    </aside>
-  </section>
-
-  <section>
-    <h2>Site search</h2>
-    <ul>
-      <li>Do it because you want fulltext search</li>
-      <li>Use Search API + Elasticsearch Connector</li>
-      <li>Use Solr instead of Elasticsearch for the general case</li>
-    </ul>
-  </section>
 </section>
 
 <section>
   <section>
     <h2>Inline lookup widget</h2>
   </section>
-  
+
   <section>
     <h2>Why?</h2>
     <p>Content editors needed to find precise matches among lots of records</p>
@@ -375,37 +279,18 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
       <li>Elasticsearch javascript library</li>
       <li>Store the rendered result markup in Elasticsearch</li>
     </ul>
-    
+
     <aside class="notes">
       <p>used the ES javascript library with jquery, this required jquery update</p>
       <p>talking to ES with javascript means that the elasticsearch server has to be more open--again, talk to your ops about how to secure it</p>
+      <ul>
+        <li>Same Search API index as fulltext search</li>
+        <li>Use-case-specific javascript on a field widget</li>
+        <li>Ability to build Elasticsearch queries was key</li>
+      </ul>
     </aside>
   </section>
 
-<!--
-  <section>
-    <h2>A quick demo...</h2>
-    <aside class="notes">
-      <p>show the list of things, search for a thing using syntax</p>
-    </aside>
-  </section>
--->
-
-  <section>
-    <h2>Details</h2>
-    <ul>
-      <li>Same Search API index as fulltext search</li>
-      <li>Use-case-specific javascript on a field widget</li>
-      <li>Ability to build Elasticsearch queries was key</li>
-      <li>Lots of content had accented characters</li>
-    </ul>
-    <aside class="notes">
-      <p>at first we had a separate index, but realized that we needed the same fulltext and fields as other search on the site</p>
-      <p>custom field widgets are a pain</p>
-      <p>Elasticsearch queries nest naturally, which makes similar filtering very hard to implement in Views. Drupal wrappers for ES API are too many layers, make assumptions</p>
-      <p>Case folding plugin to handle accented characters</p>
-    </aside>
-  </section>
 
   <section>
     <h2>Query building</h2>
@@ -427,7 +312,6 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
     <h2>In this case...</h2>
     <ul>
       <li>Start with a full text search query</li>
-      <li>Filter out content IDs that are already referenced</li>
       <li>Filter by content type and editorial status</li>
     </ul>
     <aside class="notes">
@@ -451,7 +335,7 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
   <section>
     <h2>Auto suggest</h2>
   </section>
-  
+
   <section>
     <h2>Why?</h2>
     <p>Search-based navigation for a dataset that is mainly titles.</p>
@@ -466,17 +350,17 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
   <section>
     <h2>How?</h2>
     <ul>
-      <li>Elastica library</li>
-      <li>Custom Drupal integration for indexing content</li>
       <li>Elasticsearch analyzer configuration</li>
-      <li>Silex API drawing data from Elasticsearch</li>
     </ul>
-    
+
     <aside class="notes">
-      <p>using Elastica was not fun for our team, because we were adjusting to the Elasticsearch query structure. use the PHP library from Elasticsearch.org now, though.</p>
-      <p>Drupal indexing integration = add to a queue on hook_node_save, then classes that squashed nodes into something close to the data structures we wanted the API to provide, and indexed that</p>
-      <p>A Silex app sat on the other side of Elasticsearch and wrapped up JSON data from Elasticsearch in HAL.</p>
+      <p>Don't do any "analysis" in Drupal/PHP!!!</p>
       <p>that decoupled drupal session that Larry Garfield has been giving lately? we used Elasticsearch for part of that. autosuggest is a small part of how we used elasticsearch there, but it was the funnest part.</p>
+      <p>A Silex app sat on the other side of Elasticsearch and wrapped up JSON data from Elasticsearch in HAL.</p>
+      <p>I had done a ton of "weird" Solr work (sarnia) and had been reading about elasticsearch, so we decided to use it as the data source for the API layer</p>
+      <p>our internal engineering team for this project was four people--myself, Robin, Beth, and Larry. let me just note what an incredible opportunity it is in this field to work on a team with so many women, and the gender composition was an accident of resourcing and who worked out of the chicago office. we still have miles to go on creating a professional environment that can empower and enrich folks of varied backgrounds, but I'm lucky in that right now, that work is part of our daily process and environment at palantir.</p>
+      <p>so I became the architect and expert on the elasticsearch component</p>
+      <p>because solr and elasticsearch are based on the same search engine library, luncene, the concepts and even many of the search options and behaviors carry over</p>
     </aside>
   </section>
 
@@ -514,7 +398,7 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
       <li>Shingled: the dark, the dark knight, dark knight</li>
       <li>NGrams: ..., d, da, dark, dark k, dark kn, ...</li>
     </ul>
-    
+
     <aside class="notes">
       <p>ngrams generate tokens with trailing whitespace, so trim that</p>
       <p>then remove tokens that are stop words, like "the". that should not match any titles on its own... but it should affect matching on sequenced words</p>
@@ -524,12 +408,16 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
   </section>
 
   <section>
-    <h2>A quick demo...</h2>
+    <h2>Checking your work</h2>
+    <ul>
+      <li><code>curl -XGET "http://elasticsearch.dev:9200/movie_titles/_analyze?..."</code></li>
+      <li><a href="http://mobz.github.io/elasticsearch-head/">Elasticsearch head</a></li>
+    </ul>
     <aside class="notes">
       <p>To tweak analyzers, sometimes you need to look at what is happening.</p>
-      <p>you can use curl, or elasticsearch head</p>
-      <p>Go to Elasticsearch head, this is a plugin that gives you clicky access to Elasticsearch. won't help your mental model (still have to read the docs), but will give you some tools to explore and debug.</p>
-      <p>go to the query thing, enter /movie_titles, _analyze?analyzer=fulltext&text=The Dark Knight</p>
+      <p><code>curl -XGET "http://elasticsearch.dev:9200/movie_titles/_analyze?pretty=true&analyzer=autocomplete&text=The%20Dark%20Knight"</code></p>
+      <p>Elasticsearch head is a plugin that gives you clicky access to Elasticsearch. interface to explore and debug.</p>
+      <p>go to the query thing, enter /movie_titles, _analyze?analyzer=autocomplete&text=The Dark Knight</p>
     </aside>
   </section>
 
@@ -540,10 +428,10 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
       <li>Search string must be ONE token</li>
     </ul>
     <aside class="notes">
-      <p>remember earlier I said that a search server analyzes content, analyzes a user's queries, then finds matches between the two? sometimes analyzing them differently can make for more precise matches.</p>
+      <p>remember earlier I said that a search server analyzes content, analyzes a user's queries, then finds matches between the two? sometimes analyzing the content and the queries differently can make for more precise matches.</p>
       <p>why should the search string be just one token? because the second word you add should narrow the search by sequence... everything you type should appear in order in the result.</p>
       <p>to handle this, you can configure a different analyzer to handle indexing the content than the user's search queries.</p>
-      <p>applies to diacritics and case folding, too! matching exactly what the user typed.</p>
+      <p>applies to diacritics/accent folding, too! matching exactly what the user typed.</p>
     </aside>
   </section>
 
@@ -597,12 +485,13 @@ $ drush en composer_manager elasticsearch_connector_search_api search_api_views<
       <p>Search feature expectations are at the mercy of Google search UX... but these features are a different kind of search tool. expectations about how search works are hard to nail down because people use lots of different search tools and explore their datasets in lots of different ways</p>
     </aside>
   </section>
-  
+
 </section>
 
 <section>
   <h2>References</h2>
     <ul>
+      <li><a href="http://palantirnet.github.io/slides-elasticsearch-and-drupal/#/">Full version of this presentation</a> (press 's' for notes)</li>
       <li><a href="http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/index.html">Elasticsearch documentation</a></li>
       <li><a href="https://gist.github.com/becw/06bc47ce2dc8a7205ed8">My simple Vagrant setup</a></li>
       <li><a href="https://gist.github.com/becw/79362c7379687a904ebc">Example config of shingles and NGrams</a></li>
